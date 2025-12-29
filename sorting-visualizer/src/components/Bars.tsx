@@ -21,7 +21,7 @@ export function Bars({ values, active = [], sorted = new Set() }: BarsProps) {
               flex: 1,
               height: `${(v / maxVal) * 100}%`,
               borderRadius: 4,
-              opacity: isSorted ? 0.75 : 1,
+              opacity: isSorted ? 0.8 : 1,
               outline: isActive ? '2px solid white' : 'none',
               background: isSorted ? '#2dd4bf' : '#60a5fa'
             }}
