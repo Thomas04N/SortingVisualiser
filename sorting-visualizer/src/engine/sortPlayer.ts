@@ -47,6 +47,11 @@ export function applyAction(state: PlayerState, action: SortAction): PlayerState
       next.sorted.add(action.i);
       return next;
     }
+    case 'overwrite': {
+      next.active = [action.i];
+      next.values[action.i] = action.value;
+      return next;
+    }    
     case 'done': {
       next.active = [];
       // mark all sorted as a nice finish

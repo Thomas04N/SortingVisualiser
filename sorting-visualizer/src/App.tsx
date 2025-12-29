@@ -1,11 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Bars } from './components/Bars';
 import { randomArray } from './utils/randomArray';
-import { bubbleSortActions } from './algorithms/sorting/bubble';
-import { applyAction, initialPlayerState, type PlayerState } from './engine/sortPlayer';
+
 import type { SortAction } from './algorithms/types';
+import { bubbleSortActions } from './algorithms/sorting/bubble';
+import { insertionSortActions } from './algorithms/sorting/insertion';
+import { mergeSortActions } from './algorithms/sorting/merge';
+
+import { applyAction, initialPlayerState, type PlayerState } from './engine/sortPlayer';
+
+type Algorithm = 'bubble' | 'insertion' | 'merge';
 
 export default function App() {
+  const [algo, setAlgo] = useState<Algorithm>('bubble');
+
   const [size, setSize] = useState(40);
   const [baseValues, setBaseValues] = useState<number[]>(() => randomArray(40, 200));
 
@@ -18,7 +26,7 @@ export default function App() {
 
   const timerRef = useRef<number | null>(null);
 
-  // Keep player in sync when baseValues changes (shuffle/size)
+  // Reset playback state when the base array changes
   useEffect(() => {
     setPlayer(initialPlayerState(baseValues));
     setActions([]);
@@ -26,10 +34,31 @@ export default function App() {
     setIsPlaying(false);
   }, [baseValues]);
 
+  // Also reset when algorithm changes (keeps UX predictable)
+  useEffect(() => {
+    setPlayer(initialPlayerState(baseValues));
+    setActions([]);
+    setActionIndex(0);
+    setIsPlaying(false);
+  }, [algo, baseValues]);
+
   const canStep = actionIndex < actions.length;
 
+  function generateActions(values: number[], algorithm: Algorithm): SortAction[] {
+    switch (algorithm) {
+      case 'bubble':
+        return bubbleSortActions(values);
+      case 'insertion':
+        return insertionSortActions(values);
+      case 'merge':
+        return mergeSortActions(values);
+      default:
+        return bubbleSortActions(values);
+    }
+  }
+
   function buildActions() {
-    const a = bubbleSortActions(baseValues);
+    const a = generateActions(baseValues, algo);
     setActions(a);
     setActionIndex(0);
     setPlayer(initialPlayerState(baseValues));
@@ -54,8 +83,8 @@ export default function App() {
   // Playback loop
   useEffect(() => {
     if (!isPlaying) return;
-
     if (!actions.length) return;
+
     if (!canStep) {
       setIsPlaying(false);
       return;
@@ -74,11 +103,28 @@ export default function App() {
 
   const max = useMemo(() => Math.max(...player.values, 1), [player.values]);
 
+  const algoLabel =
+    algo === 'bubble' ? 'Bubble Sort' : algo === 'insertion' ? 'Insertion Sort' : 'Merge Sort';
+
   return (
     <div style={{ minHeight: '100vh', padding: 24, background: '#0b1020', color: 'white' }}>
       <h1 style={{ marginTop: 0 }}>Sorting Algorithm Visualizer</h1>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 }}>
+        <label>
+          Algorithm
+          <select
+            style={{ display: 'block', width: 220 }}
+            value={algo}
+            onChange={(e) => setAlgo(e.target.value as Algorithm)}
+            disabled={isPlaying}
+          >
+            <option value="bubble">Bubble Sort</option>
+            <option value="insertion">Insertion Sort</option>
+            <option value="merge">Merge Sort</option>
+          </select>
+        </label>
+
         <label>
           Size: {size}
           <input
@@ -118,7 +164,7 @@ export default function App() {
 
         {!isPlaying ? (
           <button onClick={start} disabled={actions.length > 0 && !canStep}>
-            Start (Bubble)
+            Start ({algoLabel})
           </button>
         ) : (
           <button onClick={pause}>Pause</button>
