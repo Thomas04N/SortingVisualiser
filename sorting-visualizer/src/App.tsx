@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useMemo, useState } from 'react';
+import { Bars } from './components/Bars';
+import { randomArray } from './utils/randomArray';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [size, setSize] = useState(40);
+  const [values, setValues] = useState(() => randomArray(40, 200));
+
+  const max = useMemo(() => Math.max(...values, 1), [values]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ minHeight: '100vh', padding: 24, background: '#0b1020', color: 'white' }}>
+      <h1 style={{ marginTop: 0 }}>Sorting Algorithm Visualizer</h1>
 
-export default App
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+        <label>
+          Size: {size}
+          <input
+            style={{ display: 'block', width: 200 }}
+            type="range"
+            min={10}
+            max={120}
+            value={size}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              setSize(n);
+              setValues(randomArray(n, 200));
+            }}
+          />
+        </label>
+
+        <button onClick={() => setValues(randomArray(size, 200))}>Shuffle</button>
+
+        <div style={{ marginLeft: 'auto', opacity: 0.8 }}>Max: {max}</div>
+      </div>
+
+      <Bars values={values} />
+    </div>
+  );
+}
