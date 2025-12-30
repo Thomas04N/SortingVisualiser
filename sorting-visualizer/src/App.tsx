@@ -6,10 +6,11 @@ import type { SortAction } from './algorithms/types';
 import { bubbleSortActions } from './algorithms/sorting/bubble';
 import { insertionSortActions } from './algorithms/sorting/insertion';
 import { mergeSortActions } from './algorithms/sorting/merge';
+import { quickSortActions } from './algorithms/sorting/quick';
 
 import { applyAction, initialPlayerState, type PlayerState } from './engine/sortPlayer';
 
-type Algorithm = 'bubble' | 'insertion' | 'merge';
+type Algorithm = 'bubble' | 'insertion' | 'merge' | 'quick';
 
 export default function App() {
   const [algo, setAlgo] = useState<Algorithm>('bubble');
@@ -52,6 +53,8 @@ export default function App() {
         return insertionSortActions(values);
       case 'merge':
         return mergeSortActions(values);
+      case 'quick':
+        return quickSortActions(values);
       default:
         return bubbleSortActions(values);
     }
@@ -104,7 +107,7 @@ export default function App() {
   const max = useMemo(() => Math.max(...player.values, 1), [player.values]);
 
   const algoLabel =
-    algo === 'bubble' ? 'Bubble Sort' : algo === 'insertion' ? 'Insertion Sort' : 'Merge Sort';
+    algo === 'bubble' ? 'Bubble Sort' : algo === 'insertion' ? 'Insertion Sort' : algo === 'merge' ? 'Merge Sort' : 'Quick Sort';
 
   return (
     <div style={{ minHeight: '100vh', padding: 24, background: '#0b1020', color: 'white' }}>
@@ -122,6 +125,7 @@ export default function App() {
             <option value="bubble">Bubble Sort</option>
             <option value="insertion">Insertion Sort</option>
             <option value="merge">Merge Sort</option>
+            <option value="quick">Quick Sort</option>
           </select>
         </label>
 
