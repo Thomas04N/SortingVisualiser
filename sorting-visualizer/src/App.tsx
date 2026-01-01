@@ -8,10 +8,11 @@ import { insertionSortActions } from './algorithms/sorting/insertion';
 import { mergeSortActions } from './algorithms/sorting/merge';
 import { quickSortActions } from './algorithms/sorting/quick';
 import {heapSortActions} from './algorithms/sorting/heap';
+import { selectionSortActions } from './algorithms/sorting/selection';
 
 import { applyAction, initialPlayerState, type PlayerState } from './engine/sortPlayer';
 
-type Algorithm = 'bubble' | 'insertion' | 'merge' | 'quick' | 'heap';
+type Algorithm = 'bubble' | 'insertion' | 'merge' | 'quick' | 'heap' | 'selection';
 
 export default function App() {
   const [algo, setAlgo] = useState<Algorithm>('bubble');
@@ -58,6 +59,8 @@ export default function App() {
         return quickSortActions(values);
       case 'heap':
         return heapSortActions(values);
+      case 'selection':
+        return selectionSortActions(values);
       default:
         return bubbleSortActions(values);
     }
@@ -110,7 +113,7 @@ export default function App() {
   const max = useMemo(() => Math.max(...player.values, 1), [player.values]);
 
   const algoLabel =
-    algo === 'bubble' ? 'Bubble Sort' : algo === 'insertion' ? 'Insertion Sort' : algo === 'merge' ? 'Merge Sort' : algo ==  'quick' ? 'Quick Sort' : 'Heap Sort';
+    algo === 'bubble' ? 'Bubble Sort' : algo === 'insertion' ? 'Insertion Sort' : algo === 'merge' ? 'Merge Sort' : algo ==  'quick' ? 'Quick Sort' : algo == 'heap' ? 'Heap Sort' : 'Selection Sort';
 
   return (
     <div style={{ minHeight: '100vh', padding: 24, background: '#0b1020', color: 'white' }}>
@@ -130,6 +133,7 @@ export default function App() {
             <option value="merge">Merge Sort</option>
             <option value="quick">Quick Sort</option>
             <option value="heap">Heap Sort</option>
+            <option value="selection">Selection Sort</option>
           </select>
         </label>
 
