@@ -23,7 +23,7 @@ export function Bars({ values, active = [], sorted = new Set() }: BarsProps) {
               borderRadius: 4,
               opacity: isSorted ? 0.8 : 1,
               outline: isActive ? '2px solid white' : 'none',
-              background: isSorted ? '#2dd4bf' : '#60a5fa'
+              background: isSorted ? '#22c55e' : '#60a5fa'
             }}
           />
         );
